@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  MhPath:
+    Type: String
+    Default: solutions/malmuth-harville
+  TysenPath:
+    Type: String
+    Default: solutions/tysen
+  ApiStackName:
+    Type: String
+Resources:
+  MalmuthIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      PayloadFormatVersion: "2.0"
+      ApiId: !ImportValue
+        "Fn::Sub": "${ApiStackName}-Api"
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MalmuthFunction.Arn}/invocations"
+  MalmuthRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !ImportValue
+        "Fn::Sub": "${ApiStackName}-Api"
+      RouteKey: !Sub "POST /${MhPath}"
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref MalmuthIntegration
+  MalmuthCorsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !ImportValue
+        "Fn::Sub": "${ApiStackName}-Api"
+      RouteKey: !Sub "OPTIONS /${MhPath}"
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref MalmuthIntegration
+  MalmuthTrigger:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref MalmuthFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !Sub
+        - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/*/${MhPath}
+        - Api: !ImportValue
+            "Fn::Sub": "${ApiStackName}-Api"
+  MalmuthFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Role: arn:aws:iam::145724753995:role/joshua-schoepproject-com-lambda-role
+      Runtime: python3.12
+      Handler: index.handler
+      Code:
+        ZipFile: >
+          def handler(event,context):
+            pass
+
+  TysenIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      PayloadFormatVersion: "2.0"
+      ApiId: !ImportValue
+        "Fn::Sub": "${ApiStackName}-Api"
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TysenFunction.Arn}/invocations"
+  TysenRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !ImportValue
+        "Fn::Sub": "${ApiStackName}-Api"
+      RouteKey: !Sub "POST /${TysenPath}"
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref TysenIntegration
+  TysenCorsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !ImportValue
+        "Fn::Sub": "${ApiStackName}-Api"
+      RouteKey: !Sub "OPTIONS /${TysenPath}"
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref TysenIntegration
+  TysenTrigger:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TysenFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !Sub
+        - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/*/${TysenPath}
+        - Api: !ImportValue
+            "Fn::Sub": "${ApiStackName}-Api"
+  TysenFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Role: arn:aws:iam::145724753995:role/joshua-schoepproject-com-lambda-role
+      Runtime: python3.12
+      Handler: index.handler
+      Code:
+        ZipFile: >
+          def handler(event,context):
+            pass
+Outputs:
+  MalmuthFunction:
+    Value: !Ref MalmuthFunction
+  TysenFunction:
+    Value: !Ref TysenFunction

@@ -1,0 +1,45 @@
+---
+import Standard from "@/layouts/standard.astro";
+---
+
+<Standard>
+    <div class="p-10">
+        <h2 class="text-xl font-semibold mb-3">Philosophies</h2>
+        <p>
+            ICM has essentially become a standard for how to split a rank-paid tournament without having to finish it. 
+            Every "player" in an ICM calculation plays a perfect game where their odds of winning are proportional to their stack.
+            For some discussions, there is the caveat that player skill cannot be accounted for. 
+            In my opinion, any calculation attempting to account for player skill would be somewhat arbitrary and could be disputed more easily.
+        </p>
+        <h3 class="text-md font-semibold mt-8 mb-3">Algorithms</h3>
+        <p>
+            This calculator provides access to two algorithms for calculating ICM: The original 
+            <a class="text-purple-800 hover:underline" href="https://www.jstor.org/stable/2284068">Malmuth-Harville</a> 
+            equation, and the 
+            <a class="text-purple-800 hover:underline" href="https://forumserver.twoplustwo.com/15/poker-theory-amp-gto/new-algorithm-calculate-icm-large-tournaments-1098489/">Tysen Method</a>, 
+            coined on twoplustwo forums.
+            <br />
+            <br />
+            The Malmuth-Harville equation is a multi-step Bayes probability calculation.
+            It works by calculating each player's odds of placing in each position, and gives them that proportion of that payout. 
+            The sum of these is their ICM calculated payout. This algorithm is pure, however it does have to run on all permutations of
+            the players, which gives it factorial time complexity.
+            <br />
+            <br />
+            The Tysen method is a Monte Carlo simulation of the same, with linear complexity that can solve the problem for larger groups.
+            Each game is simulated in a similar way to the Malmuth-Harville equation -- each player has a chance of winnig proportional to their stack.
+            With enough iterations, we can generate an identical structure as the Malmuth-Harville equation in linear time. 
+            The error is inversely-proportional to the square root of the iteration count.
+            We run the simulation 1,000,000 times when using this algorithm.
+        </p>
+        <h3 class="text-md font-semibold mt-8 mb-3">Data Reporting</h3>
+        <p>
+            Since ICM has become a tool for performing game-theory-optimal actions, past chopping remaining pots once the adults get tired, I wanted to give a better set of data representations than seen on similar calculators.
+            Graphs comparing each player's take compared to eachothers, their take relative to the original payouts, and other important data.
+            <br />
+            <br />
+            Other requested data models would happily be considered. Feel free to <a class="text-purple-800 hover:underline" href="https://www.schoep.org/contact">Contact me</a> with ideas.
+        </p>
+    </div>
+</Standard>
+

@@ -1,0 +1,15 @@
+---
+import { Header } from "@/components/header/header"
+import Footer from "@/components/footer.astro"
+import HTML from "./html.astro"
+---
+
+<HTML>
+    <Header />
+    <main class="m-5 5xl:mx-auto">
+        <div class="bg-white rounded-lg max-w-5xl mx-auto shadow-lg">
+            <slot />
+        </div>
+    </main>
+    <Footer />
+</HTML>

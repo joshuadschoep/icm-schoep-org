@@ -1,0 +1,12 @@
+.mh-pkg
+.tysen-pkg
+__pycache__
+*/**/__pycache__
+mh.zip
+tysen.zip
+*.zip
+
+.env
+.env.dev
+.env.test
+.env.prod

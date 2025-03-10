@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  DomainName:
+    Type: String
+  BasePath:
+    Type: String
+    Default: icm
+  ApiStageName:
+    Type: String
+Resources:
+  Api:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      ProtocolType: HTTP
+      Name: !Ref DomainName
+  ApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref Api
+      AutoDeploy: true
+      StageName: !Ref ApiStageName
+  ApiMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      DomainName: !Ref DomainName
+      Stage: !Ref ApiStage
+      ApiId: !Ref Api
+      ApiMappingKey: !Ref BasePath
+Outputs:
+  Api:
+    Value: !Ref Api
+    Export:
+      Name: !Sub "${AWS::StackName}-Api"

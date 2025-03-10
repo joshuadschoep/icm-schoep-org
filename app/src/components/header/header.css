@@ -1,0 +1,5 @@
+hgroup {
+  background: linear-gradient(to left, red, purple, blue);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

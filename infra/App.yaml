@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  HostedZone:
+    Type: String
+  DomainName:
+    Type: String
+    Default: icm.schoep.org
+  BucketName:
+    Type: String
+  Ttl:
+    Type: Number
+    Default: 86400
+Mappings:
+  DnsAliasTargets:
+    CloudFront:
+      Global: Z2FDTNDATAQYW2
+    S3:
+      UsEast1: Z3AQBSTGFYJSTF
+  CachingPolicies:
+    CachingOptimized:
+      Id: 658327ea-f89d-4fab-a63d-7e88639e58f6
+  CDNPriceClasses:
+    USAndEurope:
+      Id: PriceClass_100
+  CdnSslConfig:
+    Tls1.2SniOnly:
+      SslVersion: TLSv1.2_2021
+      SupportMethod: sni-only
+Resources:
+  StaticBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref BucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+  DnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref DomainName
+      Type: A
+      HostedZoneId: !Ref HostedZone
+      AliasTarget:
+        DNSName: !GetAtt CDN.DomainName
+        HostedZoneId: !FindInMap [DnsAliasTargets, CloudFront, Global]
+  CDN:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Aliases:
+          - !Ref DomainName
+        Origins:
+          - DomainName: !Sub ${StaticBucket}.s3-website-${AWS::Region}.amazonaws.com
+            Id: S3BucketOrigin
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        DefaultCacheBehavior:
+          CachePolicyId: !FindInMap [CachingPolicies, CachingOptimized, Id]
+          Compress: true
+          DefaultTTL: !Ref Ttl
+          TargetOriginId: S3BucketOrigin
+          ViewerProtocolPolicy: "redirect-to-https"
+        HttpVersion: http2and3
+        PriceClass: !FindInMap [CDNPriceClasses, USAndEurope, Id]
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          MinimumProtocolVersion:
+            !FindInMap [CdnSslConfig, Tls1.2SniOnly, SslVersion]
+          SslSupportMethod:
+            !FindInMap [CdnSslConfig, Tls1.2SniOnly, SupportMethod]
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      DomainValidationOptions:
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref HostedZone
+      ValidationMethod: DNS
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref StaticBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: "*"
+          Action: s3:GetObject
+          Resource: !Sub "arn:${AWS::Partition}:s3:::${StaticBucket}/*"

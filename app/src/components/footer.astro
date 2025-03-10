@@ -1,0 +1,32 @@
+---
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Separator } from "./ui/separator"
+---
+
+<footer class="p-5 p-10 lg:p-10 lg:py-20 mt-5 bg-white">
+    <div class="max-w-5xl m-auto grid md:grid-cols-2 gap-20 justify-center items-center">
+        <section class="text-center md:text-left md:w-fit m-auto">
+            <h2 class="text-xl">Independant Chip Model</h2>
+            <h3 class="text-lg">Calculator</h3>
+        </section>
+        <section class="text-center">
+            <h2 class="text-lg">schoep.org</h2>
+        </section>
+        <ul class="text-center flex flex-col">
+            <h2 class="text-md font-semibold mb-2">Quick Links</h2>
+            <a class={buttonVariants({ variant: "link" })} href="https://www.schoep.org">
+                Main Site
+            </a>
+            <a class={buttonVariants({ variant: "link" })} href="https://github.com/joshuadschoep/icm-schoep-org">
+                Repository
+            </a>
+        </ul>
+        <ul class="text-center w-fit m-auto">
+            <li class="text-lg p-3">Joshua Schoep 2025</li>
+            <Separator />
+            <li class="text-lg p-3">Proudly using ShadCN UI</li>
+            <Separator />
+            <li class="text-lg p-3">Powered by AWS</li>
+        </ul>
+    </div>
+</footer>
