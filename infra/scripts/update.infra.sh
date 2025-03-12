@@ -51,7 +51,8 @@ case $STACK_TYPE in
         STACK_NAME=${BACKEND_STACK_NAME}
         PARAMETERS="ParameterKey=MhPath,ParameterValue=${BACKEND_MH_PATH} \
             ParameterKey=TysenPath,ParameterValue=${BACKEND_TYSEN_PATH} \
-            ParameterKey=ApiStackName,ParameterValue=${API_STACK_NAME}"
+            ParameterKey=ApiStackName,ParameterValue=${API_STACK_NAME} \
+            ParameterKey=Environment,ParameterValue=${ENV}"
         ;;
     frontend)
         SRC_FILE=infra/App.yaml
