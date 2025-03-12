@@ -10,6 +10,7 @@ TEMPLATE_HTTPS_URL: ${TEMPLATE_HTTPS_URL}
 REGION: ${REGION}
 TIMEOUT: ${TIMEOUT} minutes
 PROFILE: ${PROFILE}
+ENVIRONMENT: ${ENV}
 """
 
 # Args
@@ -40,7 +41,9 @@ case $STACK_TYPE in
         REMOTE_FILE=${API_TEMPLATE_NAME}
         STACK_NAME=${API_STACK_NAME}
         PARAMETERS="ParameterKey=DomainName,ParameterValue=${API_DOMAIN_NAME} \
-            ParameterKey=ApiStageName,ParameterValue=${STAGE_NAME}"
+            ParameterKey=ApiStageName,ParameterValue=${STAGE_NAME} \
+            ParameterKey=LogRetention,ParameterValue=${LOG_RETENTION_DAYS} \
+            ParameterKey=Environment,ParameterValue=${ENV}"
         ;;
     backend) 
         SRC_FILE=infra/Backend.yaml
@@ -133,6 +136,10 @@ do
     STACK_STATUS=$(aws cloudformation describe-stacks ${DESCRIBE_ARGS} | jq -r ".Stacks[0].StackStatus")
     echo "Pinged stack and received status $STACK_STATUS"
     if [[ $STACK_STATUS == "UPDATE_IN_PROGRESS" ]]; then
+        sleep 5
+    elif [[ $STACK_UPDATE == "UPDATE_ROLLBACK_IN_PROGRESS" ]]; then
+        sleep 5
+    elif [[ $STACK_UPDATE == "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" ]]; then
         sleep 5
     elif [[ $STACK_STATUS == "UPDATE_COMPLETE" ]]; then
         break

@@ -28,31 +28,36 @@ export const Form = () => {
       setApiError("");
       setResults([]);
       let result: any;
-      if (form.watch("method") === "tysen") {
-        result = await axios.post(
-          `${import.meta.env.PUBLIC_API_URI}/solutions/tysen`,
-          data
-        );
-      } else {
-        result = await axios.post(
-          `${import.meta.env.PUBLIC_API_URI}/solutions/tysen`,
-          data
-        );
-      }
+      try {
+        if (form.watch("method") === "tysen") {
+          result = await axios.post(
+            `${import.meta.env.PUBLIC_API_URI}/solutions/tysen`,
+            data
+          );
+        } else {
+          result = await axios.post(
+            `${import.meta.env.PUBLIC_API_URI}/solutions/malmuth-harville`,
+            data
+          );
+        }
 
-      setLoading(false);
+        setLoading(false);
 
-      if (result.status === 200) {
-        setResults(result.data.results);
-      } else if (result.status >= 400 && result.status <= 499) {
+        if (result.status === 200) {
+          setResults(result.data.results);
+        } else if (result.status >= 400 && result.status <= 499) {
+          setApiError("An error has occured. Please try again.");
+        } else if (result.status >= 500 && result.status <= 599) {
+          setApiError(
+            "An error has occured. We apologize for the inconvenience."
+          );
+        }
+      } catch (e) {
+        setLoading(false);
         setApiError("An error has occured. Please try again.");
-      } else if (result.status >= 500 && result.status <= 599) {
-        setApiError(
-          "An error has occured. We apologize for the inconvenience."
-        );
       }
     },
-    [setApiError]
+    [setApiError, form.watch("method")]
   );
 
   return (

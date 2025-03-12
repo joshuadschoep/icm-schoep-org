@@ -7,18 +7,44 @@ Parameters:
     Default: icm
   ApiStageName:
     Type: String
+  LogRetention:
+    Type: Number
+    Default: 7
+  Environment:
+    Type: String
+    Default: "dev"
+    AllowedValues:
+      - dev
+      - test
+      - prod
+Conditions:
+  IsProd: !Equals [!Ref Environment, "prod"]
 Resources:
   Api:
     Type: AWS::ApiGatewayV2::Api
     Properties:
       ProtocolType: HTTP
       Name: !Ref DomainName
+      DisableExecuteApiEndpoint: !If ["IsProd", true, false]
+  ApiLogs:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: !If ["IsProd", "Retain", "Delete"]
+    UpdateReplacePolicy: !If ["IsProd", "Retain", "Delete"]
+    Properties:
+      RetentionInDays: !Ref LogRetention
   ApiStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
       ApiId: !Ref Api
       AutoDeploy: true
       StageName: !Ref ApiStageName
+      DefaultRouteSettings:
+        DetailedMetricsEnabled: true
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 10
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiLogs.Arn
+        Format: '{"requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "caller":"$context.identity.caller","requestTime":"$context.requestTime","routeKey":"$context.routeKey", "status":"$context.status"}'
   ApiMapping:
     Type: AWS::ApiGatewayV2::ApiMapping
     Properties:

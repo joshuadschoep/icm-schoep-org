@@ -20,5 +20,3 @@ def calculate(payouts, players):
     average_stack = sum(players) / float(len(players))
     inverse_normalized_stacks = [average_stack / stack for stack in players]
     return run_many_tournaments(sorted(payouts, reverse=True), inverse_normalized_stacks, 10000)
-
-print("\n\nFinal result", calculate([100], [100]))

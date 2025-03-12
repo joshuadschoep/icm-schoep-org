@@ -32,6 +32,24 @@ class ClientError(Response):
             "errors": errors
         })
 
+class OptionsSuccess(Response):
+    def __init__(self, body: dict = {}):
+        super().__init__(200, body)
+
+    def toDict(self):
+        # Probably unnecessary, but we want to have pretty
+        # good control over CORS requests in proxy integrations
+        return { 
+            "statusCode": 200, 
+            "isBase64Encoded": False,
+            "headers": {
+                'Access-Control-Allow-Headers': 'Content-Type,Accept',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'OPTIONS,POST'
+            },
+            "body": json.dumps(self.body)
+        }
+
 class Success(Response):
     def __init__(self, body: dict = {}):
         super().__init__(200, body)

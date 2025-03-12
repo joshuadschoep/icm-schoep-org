@@ -2,9 +2,9 @@
 .tysen-pkg
 __pycache__
 */**/__pycache__
-mh.zip
-tysen.zip
+handler.zip
 *.zip
+pkg
 
 .env
 .env.dev

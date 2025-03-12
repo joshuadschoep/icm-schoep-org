@@ -10,6 +10,7 @@ TEMPLATE_HTTPS_URL: ${TEMPLATE_HTTPS_URL}
 REGION: ${REGION}
 TIMEOUT: ${TIMEOUT} minutes
 PROFILE: ${PROFILE}
+ENVIRONMENT: ${ENV}
 """
 
 # Args
@@ -40,7 +41,9 @@ case $STACK_TYPE in
         REMOTE_FILE=${API_TEMPLATE_NAME}
         STACK_NAME=${API_STACK_NAME}
         PARAMETERS="ParameterKey=DomainName,ParameterValue=${API_DOMAIN_NAME} \
-            ParameterKey=ApiStageName,ParameterValue=${STAGE_NAME}"
+            ParameterKey=ApiStageName,ParameterValue=${STAGE_NAME} \
+            ParameterKey=LogRetention,ParameterValue=${LOG_RETENTION_DAYS} \
+            ParameterKey=Environment,ParameterValue=${ENV}"
         ;;
     backend) 
         SRC_FILE=infra/Backend.yaml
@@ -48,7 +51,8 @@ case $STACK_TYPE in
         STACK_NAME=${BACKEND_STACK_NAME}
         PARAMETERS="ParameterKey=MhPath,ParameterValue=${BACKEND_MH_PATH} \
             ParameterKey=TysenPath,ParameterValue=${BACKEND_TYSEN_PATH} \
-            ParameterKey=ApiStackName,ParameterValue=${API_STACK_NAME}"
+            ParameterKey=ApiStackName,ParameterValue=${API_STACK_NAME} \
+            ParameterKey=LogRetention,ParameterValue=${LOG_RETENTION_DAYS} \
         ;;
     frontend)
         SRC_FILE=infra/App.yaml
