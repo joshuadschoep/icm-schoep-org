@@ -1,30 +1,46 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta
-		  name="description"
-		  content="Portfolio and personal outreach website of Joshua Schoep."
-		/>
-		<link
-		  rel="icon"
-		  type="image/svg+xml"
-		  href="https://assets.schoepproject.com/favicon.svg"
-		/>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-		<link
-		  href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;display=swap"
-		  rel="stylesheet"
-		/>
-		<title>ICM Calculator</title>
-		<meta name="description" content="ICM Calculator on schoep.org" />
-	</head>
-	<body class="bg-gray-200">
-		<slot />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Portfolio and personal outreach website of Joshua Schoep."
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="https://assets.schoepproject.com/favicon.svg"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>ICM Calculator</title>
+    <meta name="description" content="ICM Calculator on schoep.org" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V08TNR16XE"
+    ></script>
+    <script>
+      // @ts-ignore
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        // @ts-ignore
+        dataLayer.push(arguments);
+      }
+      // @ts-ignore
+      gtag("js", new Date());
+
+      // @ts-ignore
+      gtag("config", "G-V08TNR16XE");
+    </script>
+  </head>
+  <body class="bg-gray-200">
+    <slot />
+  </body>
 </html>
